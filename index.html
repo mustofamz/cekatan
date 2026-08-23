@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CEKATAN — Timbang Terima Ruangan Kenanga</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============ GERBANG PETUGAS ============ -->
+<div id="gerbang" class="gerbang">
+  <div class="gerbang-kartu">
+    <p class="eyebrow">Ruangan Kenanga &middot; 44 tempat tidur</p>
+    <h1 class="gerbang-judul">CEKATAN</h1>
+    <p class="gerbang-sub">Semua tindakan tercatat atas nama petugas yang sedang jaga. Isi dulu sebelum masuk.</p>
+
+    <label class="lbl" for="g-nama">Nama petugas</label>
+    <input id="g-nama" class="inp" placeholder="Contoh: Mustofa" autocomplete="off">
+
+    <label class="lbl">Shift jaga</label>
+    <div class="shift-pilih" id="g-shift">
+      <button type="button" data-shift="PAGI"><span>PAGI</span><small>07.30&ndash;14.00</small></button>
+      <button type="button" data-shift="SORE"><span>SORE</span><small>14.00&ndash;20.00</small></button>
+      <button type="button" data-shift="MALAM"><span>MALAM</span><small>20.00&ndash;07.30</small></button>
+    </div>
+
+    <button id="g-masuk" class="btn-utama">Mulai jaga</button>
+    <p id="g-pesan" class="pesan-galat" hidden></p>
+  </div>
+</div>
+
+<!-- ============ APLIKASI ============ -->
+<div id="app" class="app" hidden>
+
+  <header class="topbar">
+    <div class="topbar-kiri">
+      <span class="merek">CEKATAN</span>
+      <span class="badge-shift" id="badge-shift">&mdash;</span>
+    </div>
+    <div class="topbar-kanan">
+      <span class="status-sambung" id="status-sambung"><i></i>menyambungkan&hellip;</span>
+      <button id="btn-ganti" class="btn-teks">Ganti petugas</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <section class="papan">
+      <div class="angka">
+        <strong id="jml-dirawat">0</strong>
+        <span>sedang dirawat</span>
+      </div>
+      <div class="angka">
+        <strong id="jml-belum">0</strong>
+        <span>belum ada rencana <em id="lbl-shift-berikut">&mdash;</em></span>
+      </div>
+      <div class="angka">
+        <strong id="jml-keluar">0</strong>
+        <span>sudah keluar ruangan</span>
+      </div>
+      <p class="papan-nota">
+        Rotasi rencana: shift <b>PAGI</b> mengisi Plan Sore &middot; <b>SORE</b> mengisi Plan Malam &middot; <b>MALAM</b> mengisi Plan Pagi.
+      </p>
+    </section>
+
+    <div class="bar-alat">
+      <input id="cari" class="inp inp-cari" placeholder="Cari nama, kamar, atau DPJP" autocomplete="off">
+      <label class="cek"><input type="checkbox" id="tampil-semua"> Tampilkan pasien yang sudah keluar</label>
+      <button id="btn-tambah" class="btn-utama btn-kecil">Tambah pasien</button>
+    </div>
+
+    <div id="daftar" class="daftar"></div>
+
+    <div id="kosong" class="kosong" hidden>
+      <p>Belum ada pasien di ruangan.</p>
+      <button class="btn-utama btn-kecil" onclick="document.getElementById('btn-tambah').click()">Tambah pasien pertama</button>
+    </div>
+
+  </main>
+</div>
+
+<!-- ============ PANEL FORM ============ -->
+<div id="tirai" class="tirai" hidden></div>
+
+<aside id="panel" class="panel" hidden>
+  <div class="panel-kepala">
+    <h2 id="panel-judul">Tambah pasien</h2>
+    <button id="panel-tutup" class="btn-teks">Tutup</button>
+  </div>
+
+  <div class="panel-isi">
+    <label class="lbl" for="f-nama">Nama pasien</label>
+    <input id="f-nama" class="inp caps" placeholder="SUNARTI (58 TH)">
+
+    <div class="grid-2">
+      <div>
+        <label class="lbl" for="f-rm">No. RM</label>
+        <input id="f-rm" class="inp mono" placeholder="123456">
+      </div>
+      <div>
+        <label class="lbl" for="f-kamar">Kamar</label>
+        <select id="f-kamar" class="inp"></select>
+      </div>
+    </div>
+
+    <label class="lbl" for="f-dpjp">DPJP</label>
+    <select id="f-dpjp" class="inp"></select>
+
+    <label class="lbl" for="f-diagnosa">Diagnosa</label>
+    <input id="f-diagnosa" class="inp caps" placeholder="POST OP APENDEKTOMI H+1">
+
+    <label class="lbl" for="f-ttv">TTV</label>
+    <input id="f-ttv" class="inp" placeholder="TD 120/80 &middot; N 84 &middot; S 36.5 &middot; RR 20">
+
+    <label class="lbl" for="f-therapy">Therapy</label>
+    <textarea id="f-therapy" class="inp ta" rows="2" placeholder="Inf. RL 20 tpm, Ceftriaxone 2x1 gr, Ketorolac 3x30 mg"></textarea>
+
+    <label class="lbl" for="f-status">Status</label>
+    <select id="f-status" class="inp">
+      <option>DIRAWAT</option><option>BLPL</option><option>ALIH RAWAT</option>
+      <option>APS</option><option>DIRUJUK</option><option>MENINGGAL</option><option>BATAL MRS</option>
+    </select>
+
+    <div class="pemisah"><span id="lbl-plan">Rencana shift berikutnya</span></div>
+    <p class="petunjuk-kecil">Format SBAR, pisahkan tiap poin dengan tanda <b>|</b></p>
+    <textarea id="f-plan" class="inp ta" rows="4" placeholder="S: nyeri luka operasi skala 4|B: post op apendektomi H+1|A: nyeri akut terkontrol|R: lanjut analgetik, mobilisasi bertahap"></textarea>
+
+    <div class="panel-aksi">
+      <button id="f-simpan" class="btn-utama">Simpan</button>
+      <button id="f-hapus" class="btn-hapus" hidden>Hapus pasien</button>
+    </div>
+    <p id="f-pesan" class="pesan-galat" hidden></p>
+  </div>
+</aside>
+
+<div id="toast" class="toast" hidden></div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+rules_version = '2';
+
+// ============================================================
+//  ATURAN KEAMANAN FIRESTORE
+//  Tempel isi salah satu blok di bawah ke:
+//  Firebase Console > Firestore Database > tab Rules > Publish
+// ============================================================
+
+// ------------------------------------------------------------
+// PILIHAN A — MODE UJI COBA (pakai ini dulu supaya dummy jalan)
+// Siapa pun yang tahu alamat proyek bisa baca & tulis.
+// JANGAN dipakai untuk data pasien sungguhan.
+// Ganti tanggal di bawah agar akses otomatis mati sesudahnya.
+// ------------------------------------------------------------
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /pasien/{dokumen} {
+      allow read, write: if request.time < timestamp.date(2026, 12, 31);
+    }
+  }
+}
+
+// ------------------------------------------------------------
+// PILIHAN B — SESUDAH LOGIN DIPASANG (untuk data sungguhan)
+// Hapus blok A di atas, lalu pakai blok ini.
+// Hanya petugas yang sudah masuk lewat Firebase Authentication
+// yang boleh membaca dan menulis.
+// ------------------------------------------------------------
+// service cloud.firestore {
+//   match /databases/{database}/documents {
+//     match /pasien/{dokumen} {
+//       allow read, write: if request.auth != null;
+//     }
+//   }
+// }
